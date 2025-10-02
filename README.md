@@ -29,12 +29,13 @@ A professional application for analyzing and reporting tower bolt tension data f
 1. **Double-click** `Install-Tool.bat`
    - Professional GUI installer (no command prompt!)
    - Downloads latest version from GitHub
+   - Installs to your Desktop automatically
    - Sets up everything automatically
    - Works even if Git is not installed
 
 2. **Launch the installed application**
    - Use the desktop shortcut created during installation
-   - Or run `Launch.bat` from the installation folder
+   - Or run `Launch.bat` from the Desktop installation folder
 
 ## Requirements
 
@@ -115,6 +116,7 @@ VestasTensionDataTool/
 ### Standalone GUI Installer (`Install-Tool.bat`)
 - Uses system Anaconda Python at `C:\ProgramData\anaconda3\python.exe`
 - Downloads latest version from GitHub (no Git required)
+- Installs to Desktop automatically (no folder selection)
 - Creates virtual environment using system Python
 - Installs dependencies using the venv
 - Creates desktop shortcut and launcher
