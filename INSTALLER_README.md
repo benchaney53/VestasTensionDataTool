@@ -2,16 +2,16 @@
 
 ## Quick Start
 
-### For End Users (Recommended - Easiest!)
+### For End Users (Recommended - Professional GUI Installer)
 
-1. **Download the Standalone Installer**
-   - Download **`Install-Standalone.bat`** from the GitHub repository
+1. **Download the Setup Wizard**
+   - Download **`Setup.exe.bat`** from the GitHub repository
    - Save it **anywhere** on your computer (Desktop, Downloads, etc.)
    - **You only need this ONE file!**
 
-2. **Run the Installer**
-   - Double-click `Install-Standalone.bat`
-   - Follow the on-screen prompts
+2. **Run the Professional Setup**
+   - Double-click `Setup.exe.bat`
+   - Follow the modern Windows wizard interface
    - The installer will automatically:
      - Download the latest version from GitHub
      - Set up Python environment
@@ -19,22 +19,25 @@
      - Create launcher and shortcuts
 
 3. **Launch the Application**
-   - Use the desktop shortcut (if created during installation)
+   - Use the desktop shortcut (created automatically)
    - Or run `Launch.bat` from the installation folder
 
-**Why use the standalone installer?**
-- ✅ Only need to download ONE file
-- ✅ Works from any location
-- ✅ Downloads everything else automatically
-- ✅ No manual file management required
+**✨ Why use the GUI Setup Wizard?**
+- 🎨 **Professional appearance** - Modern Windows installer interface
+- 📋 **Step-by-step guidance** - Clear wizard with progress indicators
+- 📝 **License agreement** - Proper EULA acceptance
+- 📁 **Location selection** - Choose where to install
+- ⚡ **Real-time progress** - See installation status and progress bars
+- 🔍 **Automatic Python detection** - Finds and uses the right Python installation
+- 🛡️ **Error handling** - Clear error messages and troubleshooting
 
 ---
 
 ## Installation Methods
 
-### Method 1: Standalone Installer (Easiest - Recommended!)
+### Method 1: GUI Setup Wizard (Recommended - Professional)
 
-**File:** `Install-Standalone.bat`
+**File:** `Setup.exe.bat`
 
 **Requirements:**
 - Windows 7 or later
@@ -42,22 +45,26 @@
 - Internet connection
 
 **Steps:**
-1. Download **only** `Install-Standalone.bat`
+1. Download **only** `Setup.exe.bat`
 2. Save it anywhere (Desktop, Downloads folder, etc.)
 3. Double-click to run
-4. Choose installation location
-5. Wait for automatic setup
-6. Launch the application
+4. Follow the professional wizard interface
+5. Choose installation options
+6. Wait for automatic setup
+7. Launch the application
 
 **Advantages:**
-- ✅ **Only one file to download** - no dependencies
-- ✅ **Works from anywhere** - doesn't need other files
-- ✅ **Self-contained** - downloads everything automatically
-- ✅ **Always gets latest version** from GitHub
+- 🎨 **Professional GUI** - Modern Windows installer appearance
+- 📋 **Guided installation** - Step-by-step wizard with clear instructions
+- 📝 **License acceptance** - Proper EULA agreement
+- 📁 **Location selection** - Choose custom installation folder
+- ⚡ **Progress tracking** - Real-time progress bars and status
+- 🔍 **Smart Python detection** - Automatically finds compatible Python
+- 🛡️ **Error handling** - Clear error messages and recovery
 
 ---
 
-### Method 2: Full Installer Package
+### Method 2: Command-Line Standalone Installer
 
 **Files:** `Install.bat` + `installer.ps1` (both files needed)
 
@@ -156,13 +163,15 @@ python main.py
 
 ## Installer Files Available
 
-- **`Install-Standalone.bat`** - ⭐ **RECOMMENDED** - Single-file installer (downloads everything)
+- **`Setup.exe.bat`** - ⭐ **RECOMMENDED** - Professional GUI setup wizard (downloads everything)
+- `Setup.exe.ps1` - PowerShell GUI installer script (used by Setup.exe.bat)
+- `Install-Standalone.bat` - Command-line single-file installer
 - `Install.bat` - Main installer launcher (requires installer.ps1)
 - `installer.ps1` - PowerShell installation script (used by Install.bat)
 - `Install or Update from GitHub.vbs` - Update existing installations
 - `Run Tower Bolt App.vbs` - Alternative launcher
 
-**For new users:** Download `Install-Standalone.bat` - it's the easiest option!
+**For new users:** Download `Setup.exe.bat` - it's the most professional and user-friendly option!
 
 ---
 

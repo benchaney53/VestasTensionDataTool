@@ -13,23 +13,28 @@ A professional application for analyzing and reporting tower bolt tension data f
 
 ## Quick Installation
 
-### For End Users (Easiest Method)
+### For End Users (Easiest Method - GUI Wizard)
 
-1. **Download** the standalone installer:
-   - Download `Install-Standalone.bat` from this repository
+1. **Download** the setup wizard:
+   - Download `Setup.exe.bat` from this repository
    - Save it anywhere on your computer
-   
+
 2. **Run** the installer:
-   - Double-click `Install-Standalone.bat`
-   - Follow the on-screen instructions
+   - Double-click `Setup.exe.bat`
+   - Follow the professional setup wizard
    - Everything downloads and installs automatically!
-   
+
 3. **Launch** the application:
    - Use the desktop shortcut or run `Launch.bat`
 
-**Note:** The standalone installer downloads everything it needs from GitHub - you only need this one file!
+**✨ Professional GUI Installation**
+- Modern Windows wizard interface
+- Step-by-step guided installation
+- Progress bars and status updates
+- License agreement and location selection
+- Automatic Python detection and setup
 
-For detailed installation instructions and alternative methods, see [INSTALLER_README.md](INSTALLER_README.md)
+For alternative installation methods, see [INSTALLER_README.md](INSTALLER_README.md)
 
 ## Requirements
 
