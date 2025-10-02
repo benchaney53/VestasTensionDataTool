@@ -6,7 +6,7 @@
 ' Configuration - EDIT THESE VALUES
 username = "benchaney53"           ' GitHub username
 repository = "VestasTensionDataTool"       ' Repository name
-branch = "main"                 ' Branch name (usually "main" or "master")
+branch = "master"              ' Branch name (usually "main" or "master")
 repoFolderName = "repository"   ' Local folder name for the repo
 
 ' ========================================
