@@ -24,18 +24,6 @@ A professional application for analyzing and reporting tower bolt tension data f
    - Configure analysis parameters
    - Generate professional reports
 
-### Option 2: Standalone GUI Installer
-
-1. **Double-click** `Install-Tool.bat`
-   - Professional GUI installer (no command prompt!)
-   - Downloads latest version from GitHub
-   - Installs to your Desktop automatically
-   - Sets up everything automatically
-   - Works even if Git is not installed
-
-2. **Launch the installed application**
-   - Use the desktop shortcut created during installation
-   - Or run `Launch.bat` from the Desktop installation folder
 
 ## Requirements
 
@@ -44,11 +32,6 @@ A professional application for analyzing and reporting tower bolt tension data f
 - Python 3.8 or later (automatically detected)
 - Internet connection (for first-time setup only)
 
-### For Standalone GUI Installer
-- Windows 7 or later
-- Anaconda Python installed at `C:\ProgramData\anaconda3\python.exe`
-- Internet connection (required for download)
-- PowerShell 3.0 or later (included with Windows 7+)
 
 ## What's Included
 
@@ -61,8 +44,6 @@ A professional application for analyzing and reporting tower bolt tension data f
 - **Report Template** - Excel template for data formatting
 - **Configuration** - Customizable settings
 - **Run Tower Bolt App.vbs** - One-click launcher (recommended)
-- **Install-Tool.bat** - Standalone GUI installer (downloads from GitHub)
-- **Install-Tool.ps1** - GUI installer script
 
 ## Dependencies
 
@@ -100,8 +81,6 @@ VestasTensionDataTool/
 │       ├── report_template.xlsx
 │       └── ...
 ├── Run Tower Bolt App.vbs      # One-click launcher (recommended)
-├── Install-Tool.bat           # Standalone GUI installer
-├── Install-Tool.ps1           # GUI installer script
 └── README.md                  # This file
 ```
 
@@ -113,14 +92,6 @@ VestasTensionDataTool/
 - Installs all required dependencies (first run only)
 - Launches the application with a professional loading screen
 
-### Standalone GUI Installer (`Install-Tool.bat`)
-- Uses system Anaconda Python at `C:\ProgramData\anaconda3\python.exe`
-- Downloads latest version from GitHub (no Git required)
-- Installs to Desktop automatically (no folder selection)
-- Creates virtual environment using system Python
-- Installs dependencies using the venv
-- Creates desktop shortcut and launcher
-- Shows progress in professional GUI (no command prompt)
 
 ## License
 
