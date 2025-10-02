@@ -24,18 +24,8 @@ $script:TotalSteps = 6
 $script:Wizard = $null
 $script:ProgressBar = $null
 $script:StatusLabel = $null
-
-# Update progress
-function Update-Progress {
-    param($step, $message, $detail = "")
-    $script:CurrentStep = $step
-    $script:ProgressBar.Value = ($step / $script:TotalSteps) * 100
-    $script:StatusLabel.Text = $message
-    if ($detail) {
-        $script:StatusLabel.Text += "`n$detail"
-    }
-    [System.Windows.Forms.Application]::DoEvents()
-}
+$script:InstallResult = $null
+$script:Timer = $null
 
 # Create the installer form
 function Create-InstallerForm {
@@ -48,6 +38,7 @@ function Create-InstallerForm {
     $form.MinimizeBox = $false
     $form.Icon = [System.Drawing.SystemIcons]::Application
     $form.BackColor = [System.Drawing.Color]::White
+    $form.TopMost = $true
 
     # Title
     $titleLabel = New-Object System.Windows.Forms.Label
@@ -99,7 +90,19 @@ function Create-InstallerForm {
     return $form
 }
 
-# Perform the actual installation
+# Update progress in GUI
+function Update-Progress {
+    param($step, $message, $detail = "")
+    $script:CurrentStep = $step
+    $script:ProgressBar.Value = ($step / $script:TotalSteps) * 100
+    $script:StatusLabel.Text = $message
+    if ($detail) {
+        $script:StatusLabel.Text += "`n$detail"
+    }
+    [System.Windows.Forms.Application]::DoEvents()
+}
+
+# Perform the actual installation (runs in main thread)
 function Install-Application {
     try {
         Update-Progress 1 "Checking system Python..." "Verifying Python installation..."
@@ -233,7 +236,7 @@ function Start-Installation {
 
     # Handle form closing
     $script:Wizard.Add_FormClosing({
-        if ($script:CurrentStep -lt $script:TotalSteps) {
+        if ($script:Timer -and $script:Timer.Enabled) {
             $result = [System.Windows.Forms.MessageBox]::Show("Installation is in progress. Are you sure you want to cancel?", "Cancel Installation", "YesNo", "Question")
             if ($result -eq "No") {
                 $_.Cancel = $true
@@ -241,39 +244,147 @@ function Start-Installation {
         }
     })
 
-    # Start installation in background
-    $installJob = Start-Job -ScriptBlock ${function:Install-Application}
+    # Timer to check installation progress
+    $script:Timer = New-Object System.Windows.Forms.Timer
+    $script:Timer.Interval = 100
 
-    # Timer to update progress
-    $timer = New-Object System.Windows.Forms.Timer
-    $timer.Interval = 500
-    $timer.Add_Tick({
-        if ($installJob.State -eq "Completed") {
-            $timer.Stop()
-            $result = Receive-Job $installJob
-            Remove-Job $installJob
+    $script:Timer.Add_Tick({
+        if ($script:InstallResult -ne $null) {
+            $script:Timer.Stop()
+            $script:Timer.Dispose()
 
-            $success = $result[0]
-            $errorMessage = if ($result.Count -gt 1) { $result[1] } else { "" }
-
-            if ($success) {
+            if ($script:InstallResult -eq $true) {
                 [System.Windows.Forms.MessageBox]::Show("$AppName has been successfully installed!`n`nInstallation location: $script:InstallPath`n`nYou can now launch the application from the desktop shortcut.", "Installation Complete", "OK", "Information")
-                $script:Wizard.Close()
             } else {
+                $errorMessage = $script:InstallResult[1]
                 [System.Windows.Forms.MessageBox]::Show("Installation failed:`n`n$errorMessage", "Installation Error", "OK", "Error")
-                $script:Wizard.Close()
             }
+
+            $script:Wizard.Close()
         }
     })
-    $timer.Start()
 
-    # Show the form
-    $result = $script:Wizard.ShowDialog()
+    # Show the form (non-modal)
+    $script:Wizard.Show()
 
-    if ($result -eq "Cancel" -and $installJob.State -ne "Completed") {
-        Stop-Job $installJob
+    # Start installation immediately
+    $script:Timer.Start()
+
+    try {
+        # Run installation in background
+        $installJob = Start-Job -ScriptBlock {
+            try {
+                $SystemPython = "C:\ProgramData\anaconda3\python.exe"
+                $GitHubUser = "benchaney53"
+                $RepoName = "VestasTensionDataTool"
+                $Branch = "master"
+                $AppName = "Tower Bolt Tension Data Tool"
+
+                # Check if system Python exists
+                if (-not (Test-Path $SystemPython)) {
+                    throw "System Python not found at: $SystemPython"
+                }
+
+                # Verify Python works
+                $pythonVersion = & $SystemPython "--version" 2>$null
+                if ($LASTEXITCODE -ne 0) {
+                    throw "System Python is not working"
+                }
+
+                # Download from GitHub
+                $zipUrl = "https://github.com/$GitHubUser/$RepoName/archive/refs/heads/$Branch.zip"
+                $tempZip = "$env:TEMP\$RepoName.zip"
+                $tempExtract = "$env:TEMP\$RepoName-extract"
+
+                if (Test-Path $tempZip) { Remove-Item $tempZip -Force }
+                if (Test-Path $tempExtract) { Remove-Item $tempExtract -Recurse -Force }
+
+                [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+                Invoke-WebRequest -Uri $zipUrl -OutFile $tempZip -UseBasicParsing
+
+                # Extract
+                Expand-Archive -Path $tempZip -DestinationPath $tempExtract -Force
+                $extractedFolder = Get-ChildItem $tempExtract | Select-Object -First 1
+
+                # Copy to a temporary location first, then move to final location
+                $tempInstallPath = "$env:TEMP\TowerBoltTemp"
+                if (Test-Path $tempInstallPath) { Remove-Item $tempInstallPath -Recurse -Force }
+                Copy-Item "$($extractedFolder.FullName)\*" -Destination $tempInstallPath -Recurse -Force
+
+                # Cleanup
+                Remove-Item $tempZip -Force
+                Remove-Item $tempExtract -Recurse -Force
+
+                # Create virtual environment using system Python
+                $venvPath = "$tempInstallPath\app\venv"
+                & $SystemPython -m venv $venvPath
+                if ($LASTEXITCODE -ne 0) {
+                    throw "Failed to create virtual environment"
+                }
+
+                # Install dependencies using venv
+                $requirementsPath = "$tempInstallPath\app\requirements.txt"
+                if (Test-Path $requirementsPath) {
+                    & "$venvPath\Scripts\python.exe" -m pip install --upgrade pip --quiet
+                    & "$venvPath\Scripts\pip.exe" install -r $requirementsPath --quiet
+                    if ($LASTEXITCODE -ne 0) {
+                        throw "Failed to install dependencies"
+                    }
+                }
+
+                return $true, $tempInstallPath
+            } catch {
+                return $false, $_.Exception.Message
+            }
+        }
+
+        # Wait for job to complete and get result
+        Wait-Job $installJob | Out-Null
+        $jobResult = Receive-Job $installJob
         Remove-Job $installJob
+
+        $success = $jobResult[0]
+        $data = $jobResult[1]
+
+        if ($success) {
+            $tempPath = $data
+            # Move from temp location to final location (use desktop as default)
+            $script:InstallPath = "$env:USERPROFILE\Desktop\$AppName"
+            if (Test-Path $script:InstallPath) {
+                Remove-Item $script:InstallPath -Recurse -Force
+            }
+            Move-Item $tempPath $script:InstallPath -Force
+
+            # Create launcher files
+            $venvPath = "$script:InstallPath\app\venv"
+            $launcherContent = @"
+@echo off
+REM $AppName Launcher
+cd /d "$script:InstallPath\app"
+"$venvPath\Scripts\python.exe" "$script:InstallPath\app\main.py"
+pause
+"@
+            $launcherContent | Out-File -FilePath "$script:InstallPath\Launch.bat" -Encoding UTF8
+
+            # Create desktop shortcut
+            $WshShell = New-Object -ComObject WScript.Shell
+            $Shortcut = $WshShell.CreateShortcut("$env:USERPROFILE\Desktop\$AppName.lnk")
+            $Shortcut.TargetPath = "$script:InstallPath\Launch.bat"
+            $Shortcut.WorkingDirectory = "$script:InstallPath\app"
+            $Shortcut.Description = $AppName
+            $Shortcut.Save()
+
+            $script:InstallResult = $true
+        } else {
+            $script:InstallResult = $false, $data
+        }
+
+    } catch {
+        $script:InstallResult = $false, $_.Exception.Message
     }
+
+    # Keep the application running to process timer events
+    [System.Windows.Forms.Application]::Run($script:Wizard)
 }
 
 # Run the installer
