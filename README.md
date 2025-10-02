@@ -13,19 +13,23 @@ A professional application for analyzing and reporting tower bolt tension data f
 
 ## Quick Installation
 
-### For End Users
+### For End Users (Easiest Method)
 
-1. **Download** the installer:
-   - Download `Install.bat` from this repository
+1. **Download** the standalone installer:
+   - Download `Install-Standalone.bat` from this repository
+   - Save it anywhere on your computer
    
 2. **Run** the installer:
-   - Double-click `Install.bat`
+   - Double-click `Install-Standalone.bat`
    - Follow the on-screen instructions
+   - Everything downloads and installs automatically!
    
 3. **Launch** the application:
    - Use the desktop shortcut or run `Launch.bat`
 
-For detailed installation instructions, see [INSTALLER_README.md](INSTALLER_README.md)
+**Note:** The standalone installer downloads everything it needs from GitHub - you only need this one file!
+
+For detailed installation instructions and alternative methods, see [INSTALLER_README.md](INSTALLER_README.md)
 
 ## Requirements
 
