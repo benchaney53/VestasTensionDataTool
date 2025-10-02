@@ -11,36 +11,24 @@ A professional application for analyzing and reporting tower bolt tension data f
 - 🎨 Professional Vestas-branded output
 - 💾 Configuration management
 
-## Quick Installation
+## Quick Start
 
-### For End Users (Easiest Method - GUI Wizard)
+### For End Users
 
-1. **Download** the setup wizard:
-   - Download `Setup.exe.bat` from this repository
-   - Save it anywhere on your computer
+1. **Double-click** `Run Tower Bolt App.vbs`
+   - This will automatically set up the application and launch it
+   - First run may take longer as it installs dependencies
 
-2. **Run** the installer:
-   - Double-click `Setup.exe.bat`
-   - Follow the professional setup wizard
-   - Everything downloads and installs automatically!
-
-3. **Launch** the application:
-   - Use the desktop shortcut or run `Launch.bat`
-
-**✨ Professional GUI Installation**
-- Modern Windows wizard interface
-- Step-by-step guided installation
-- Progress bars and status updates
-- License agreement and location selection
-- Automatic Python detection and setup
-
-For alternative installation methods, see [INSTALLER_README.md](INSTALLER_README.md)
+2. **Use the application**
+   - Load your tension data
+   - Configure analysis parameters
+   - Generate professional reports
 
 ## Requirements
 
 - Windows 7 or later
-- Python 3.8 or later
-- Internet connection (for installation only)
+- Python 3.8 or later (automatically detected)
+- Internet connection (for first-time setup only)
 
 ## What's Included
 
@@ -52,6 +40,7 @@ For alternative installation methods, see [INSTALLER_README.md](INSTALLER_README
   - `reporting.py` - PDF report generation
 - **Report Template** - Excel template for data formatting
 - **Configuration** - Customizable settings
+- **Run Tower Bolt App.vbs** - One-click launcher
 
 ## Dependencies
 
@@ -63,15 +52,15 @@ The application uses:
 - Pillow - Image processing
 - numpy - Numerical computations
 
-All dependencies are automatically installed by the installer.
+All dependencies are automatically installed when you first run the application.
 
 ## Usage
 
-1. Launch the application
-2. Load your tension data
-3. Configure analysis parameters
-4. Generate reports with visualizations
-5. Export professional PDF reports
+1. **Launch**: Double-click `Run Tower Bolt App.vbs`
+2. **Load Data**: Import your tension data files
+3. **Configure**: Set analysis parameters as needed
+4. **Generate**: Create reports with visualizations
+5. **Export**: Save professional PDF reports
 
 ## Project Structure
 
@@ -88,18 +77,17 @@ VestasTensionDataTool/
 │       ├── reporting.py        # Report generation
 │       ├── report_template.xlsx
 │       └── ...
-├── Install.bat                 # Installer launcher
-├── installer.ps1               # Installation script
+├── Run Tower Bolt App.vbs      # One-click launcher
 └── README.md                   # This file
 ```
 
-## Updates
+## How It Works
 
-To update an existing installation:
-
-1. Double-click `Install or Update from GitHub.vbs`
-2. Confirm the update when prompted
-3. Latest version will be downloaded automatically
+The `Run Tower Bolt App.vbs` launcher:
+- Automatically finds your Python installation
+- Creates an isolated virtual environment (first run only)
+- Installs all required dependencies (first run only)
+- Launches the application with a professional loading screen
 
 ## License
 
@@ -107,7 +95,7 @@ Vestas Internal Tool
 
 ## Support
 
-For issues or questions, please contact the development team or create an issue on GitHub.
+For issues or questions, please contact the development team.
 
 ## Author
 
