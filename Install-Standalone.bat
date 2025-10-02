@@ -1,4 +1,5 @@
 @echo off
+setlocal enabledelayedexpansion
 REM ========================================
 REM Tower Bolt Tension Data Tool
 REM Standalone Installer - Downloads Everything from GitHub
@@ -19,24 +20,54 @@ set "REPO_NAME=VestasTensionDataTool"
 set "BRANCH=master"
 set "APP_NAME=Tower Bolt Tension Data Tool"
 
-REM Check for Python
+REM Check for Python in multiple locations
 echo Checking for Python installation...
+
+set "PYTHON_EXE="
+
+REM Try python in PATH first
 python --version >nul 2>&1
-if %errorLevel% NEQ 0 (
-    echo.
-    echo [ERROR] Python is not installed or not in PATH
-    echo.
-    echo Please install Python 3.8 or later from:
-    echo https://www.python.org/downloads/
-    echo.
-    echo Make sure to check "Add Python to PATH" during installation.
-    echo.
-    pause
-    exit /b 1
+if %errorLevel% EQU 0 (
+    set "PYTHON_EXE=python"
+    for /f "tokens=*" %%i in ('python --version') do set PYTHON_VERSION=%%i
+    echo [OK] Found in PATH: %PYTHON_VERSION%
+    goto :python_found
 )
 
-for /f "tokens=*" %%i in ('python --version') do set PYTHON_VERSION=%%i
-echo [OK] Found: %PYTHON_VERSION%
+REM Check common Python installation locations
+set "PYTHON_PATHS=C:\Python39\python.exe;C:\Python310\python.exe;C:\Python311\python.exe;C:\Python312\python.exe;C:\Python313\python.exe;%LOCALAPPDATA%\Programs\Python\Python39\python.exe;%LOCALAPPDATA%\Programs\Python\Python310\python.exe;%LOCALAPPDATA%\Programs\Python\Python311\python.exe;%LOCALAPPDATA%\Programs\Python\Python312\python.exe;%LOCALAPPDATA%\Programs\Python\Python313\python.exe;C:\ProgramData\anaconda3\python.exe;%USERPROFILE%\anaconda3\python.exe;%USERPROFILE%\miniconda3\python.exe;C:\ProgramData\miniconda3\python.exe"
+
+for %%p in ("%PYTHON_PATHS:;=" "%") do (
+    if exist %%p (
+        "%%~p" --version >nul 2>&1
+        if !errorLevel! EQU 0 (
+            set "PYTHON_EXE=%%~p"
+            for /f "tokens=*" %%i in ('"%%~p" --version') do set PYTHON_VERSION=%%i
+            echo [OK] Found: !PYTHON_VERSION! at %%~p
+            goto :python_found
+        )
+    )
+)
+
+REM If no Python found
+echo.
+echo [ERROR] Python installation not found!
+echo.
+echo Searched locations:
+echo   - System PATH
+echo   - C:\Python3x\
+echo   - %LOCALAPPDATA%\Programs\Python\
+echo   - Anaconda/Miniconda installations
+echo.
+echo Please install Python 3.8 or later from:
+echo https://www.python.org/downloads/
+echo.
+echo Make sure to check "Add Python to PATH" during installation.
+echo.
+pause
+exit /b 1
+
+:python_found
 echo.
 
 REM Ask for installation location
@@ -147,10 +178,12 @@ if exist "%VENV_PATH%" (
 )
 
 echo Creating virtual environment...
-python -m venv "%VENV_PATH%"
+echo Using Python: %PYTHON_EXE%
+"%PYTHON_EXE%" -m venv "%VENV_PATH%"
 
 if %errorLevel% NEQ 0 (
     echo [ERROR] Failed to create virtual environment
+    echo Python executable: %PYTHON_EXE%
     pause
     exit /b 1
 )
@@ -187,12 +220,35 @@ echo.
 REM Create launcher batch file
 (
 echo @echo off
+echo REM Tower Bolt Tension Data Tool Launcher
+echo REM Created by installer using: %PYTHON_EXE%
 echo cd /d "%INSTALL_PATH%"
 echo "%VENV_PATH%\Scripts\python.exe" "%INSTALL_PATH%\app\main.py"
+echo if %%errorLevel%% NEQ 0 ^(
+echo     echo.
+echo     echo [ERROR] Application failed to start
+echo     echo Check that all dependencies are installed correctly
+echo     echo.
+echo ^)
 echo pause
 ) > "%INSTALL_PATH%\Launch.bat"
 
 echo [OK] Launcher created
+
+REM Create Python path info file for troubleshooting
+(
+echo Tower Bolt Tension Data Tool - Installation Info
+echo ================================================
+echo.
+echo Installation Date: %DATE% %TIME%
+echo Python Executable Used: %PYTHON_EXE%
+echo Python Version: %PYTHON_VERSION%
+echo Installation Path: %INSTALL_PATH%
+echo Virtual Environment: %VENV_PATH%
+echo.
+echo This file is for troubleshooting purposes only.
+) > "%INSTALL_PATH%\installation_info.txt"
+
 echo.
 
 REM Ask about desktop shortcut
