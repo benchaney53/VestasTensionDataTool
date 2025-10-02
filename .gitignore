@@ -122,4 +122,4 @@ ehthumbs.db
 Thumbs.db
 
 # Project specific
-*.zip
+# *.zip - commented out because app.zip is the release package
