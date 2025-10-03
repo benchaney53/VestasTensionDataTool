@@ -133,10 +133,14 @@ def generate_pdf(flange_obj, filepath: str):
     # Only show headers with actual Approval status
     print_headers = headers.loc[~headers["Approval"].str.contains("N/A", na=False), :]
 
+    # Check for failed bolts
+    failed_bolts = records[records["Approval"] == "Fail"]
+    has_failures = len(failed_bolts) > 0
+
     inch_h, inch_v = _inch_to_fig()
 
     # ===========
-    # Single Page Report
+    # Main Report Page
     # ===========
     fig, ((ax0, ax1), (ax2, ax3)) = plt.subplots(
         nrows=2, ncols=2,
@@ -299,14 +303,54 @@ def generate_pdf(flange_obj, filepath: str):
     ax3.set_ylabel("Rotation Degrees")
     ax3.set_xticks(np.arange(0, max(boltnos) + 1, 5))
 
-    # Save single page
+    # Save both pages to the same PDF
     with PdfPages(filepath) as pdf:
+        # Save main report page
         fig.supxlabel(
             f"Report Generated at {date} for {project}-{tower}-{flange} by user: {initials}",
             fontsize=8,
         )
         pdf.savefig()
         plt.close(fig)
+
+        # Create failure analysis page (only if there are failures)
+        if has_failures:
+            # ===========
+            # Failure Analysis Page - Simplified
+            # ===========
+            fig_fail = plt.figure(figsize=[8.5, 11], dpi=400)
+            ax_fail = fig_fail.add_axes([0.1, 0.1, 0.8, 0.8])
+
+            # Page header
+            ax_fail.text(
+                0.5, 1.0, f"FAILED BOLTS",
+                ha="center", va="top", fontweight="extra bold", fontsize="xx-large",
+                color=vestas_colors["Earth Red"],
+            )
+            ax_fail.axhline(0.95, color=vestas_colors["Earth Red"], linewidth=4)
+
+            # Get failed bolt information
+            failed_bolt_nos = sorted(failed_bolts[("BoltNo", "")].tolist())
+
+            # Create the failure report text
+            failure_text = f"Number of Failed Bolts: {len(failed_bolt_nos)}\n\n"
+            failure_text += "Failed Bolt Numbers:\n"
+            failure_text += abbreviate_numbers(failed_bolt_nos)
+            failure_text += "\n\nFailure Reason: Insufficient Total Rotation"
+
+            # Display the failure information
+            ax_fail.text(
+                0.05, 0.85, failure_text,
+                ha="left", va="top", fontsize="large", fontweight="bold",
+                color=vestas_colors["Night Sky"],
+                linespacing=1.5,
+            )
+
+            ax_fail.axis("off")
+
+            # Save failure analysis page
+            pdf.savefig(fig_fail)
+            plt.close(fig_fail)
 
 
 def abbreviate_numbers(lst: list) -> str:

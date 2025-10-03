@@ -24,6 +24,30 @@ A professional application for analyzing and reporting tower bolt tension data f
    - Configure analysis parameters
    - Generate professional reports
 
+### Option 2: Manual Installation with uv (Faster)
+
+For faster installation, you can use `uv` instead of pip:
+
+```bash
+# Install uv (if not already installed)
+pip install uv
+
+# Create virtual environment
+python -m venv venv
+
+# Activate virtual environment
+# On Windows:
+venv\Scripts\activate
+# On macOS/Linux:
+source venv/bin/activate
+
+# Install dependencies with uv (10-100x faster than pip)
+uv pip install -r requirements.txt
+
+# Run the application
+python main.py
+```
+
 
 ## Requirements
 
@@ -57,7 +81,7 @@ The application uses:
 - **numpy** - Numerical computations
 - **openpyxl** - Excel file reading and writing
 
-All dependencies are automatically installed when you first run the application using the VBS launcher.
+All dependencies are automatically installed when you first run the application using the VBS launcher. The application now uses `uv` for faster dependency installation (10-100x faster than pip).
 
 ## Sample Output
 
